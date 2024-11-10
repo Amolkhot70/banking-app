@@ -25,12 +25,12 @@ public class ExpenseMapper {
 //        category.setId(expenseDto.id());
 
        return new Expense (
-                expenseDto.id(),
-                expenseDto.amount(),
-                expenseDto.expenseDate(),
+                expenseDto.getId(),
+                expenseDto.getAmount(),
+                expenseDto.getExpenseDate(),
                 new Category(
-                        expenseDto.categoryDto().id(),
-                        expenseDto.categoryDto().name()
+                        expenseDto.getCategoryDto().getId(),
+                        expenseDto.getCategoryDto().getName()
                 )
         );
 

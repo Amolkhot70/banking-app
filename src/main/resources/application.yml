@@ -1,0 +1,15 @@
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  application:
+    name: expense-tracker-app
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/expense_tracker
+    username: root
+    password: Saireva1*
+
+  jpa:
+    hibernate:
+      ddl-auto: update
