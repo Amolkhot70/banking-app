@@ -8,8 +8,8 @@ public class CategoryMapper {
     //    Map CategoryDto to Category entity
     public static Category mapToCategory(CategoryDto categoryDto) {
         return new Category(
-                categoryDto.id(),
-                categoryDto.name()
+                categoryDto.getId(),
+                categoryDto.getName()
         );
     }
 

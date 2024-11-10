@@ -26,6 +26,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     private CategoryRepository categoryRepository;
     private ObjectMapper objectMapper;
 
+    private RedisService redisService;
+
     @Override
     public ExpenseDto createExpense(ExpenseDto expenseDto) {
         Expense expense = ExpenseMapper.mapToExpense(expenseDto);
@@ -36,11 +38,26 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ExpenseDto getExpenseById(Long expenseId) {
-        Expense expense = this.expenseRepository.findById(expenseId)
-                .orElseThrow(() -> new NotFoundException(
-                        NO_EXPENSE_FOUND + " " + expenseId));
 
-       return ExpenseMapper.mapToExpenseDto(expense);
+        String cacheKey = String.valueOf(expenseId);
+
+        ExpenseDto expenseDto = this.redisService.get(cacheKey, ExpenseDto.class);
+        if (expenseDto != null) {
+            System.out.println("Cache hit - Fetched from Redis: " + expenseDto);
+            return expenseDto;
+        }
+
+        // Fetch from database if not found in Redis
+        Expense expense = this.expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new NotFoundException(NO_EXPENSE_FOUND + " " + expenseId));
+
+        ExpenseDto newExpenseDto = ExpenseMapper.mapToExpenseDto(expense);
+
+        // Store the newly fetched expense in Redis
+        this.redisService.set(cacheKey, newExpenseDto, 300L);
+        System.out.println("Cache miss - Stored in Redis: " + newExpenseDto);
+
+        return newExpenseDto;
     }
 
     @Override
@@ -55,12 +72,12 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .orElseThrow(() -> new NotFoundException(
                         NO_EXPENSE_FOUND + " " + expenseId));
 
-        expense.setAmount(expenseDto.amount());
-        expense.setExpenseDate(expenseDto.expenseDate());
-        if(expenseDto.categoryDto() != null){
-            Category category = this.categoryRepository.findById(expenseDto.categoryDto().id())
+        expense.setAmount(expenseDto.getAmount());
+        expense.setExpenseDate(expenseDto.getExpenseDate());
+        if(expenseDto.getCategoryDto() != null){
+            Category category = this.categoryRepository.findById(expenseDto.getCategoryDto().getId())
                     .orElseThrow(() -> new NotFoundException(
-                            NO_CATEGORY_FOUND + " " + expenseDto.categoryDto().id()));
+                            NO_CATEGORY_FOUND + " " + expenseDto.getCategoryDto().getId()));
             expense.setCategory(category);
         }
         Expense savedExpense = this.expenseRepository.save(expense);

@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = this.categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Category is not present with id : " + categoryId));
 
-        category.setName(categoryDto.name());
+        category.setName(categoryDto.getName());
         Category updatedCategory = this.categoryRepository.save(category);
         return CategoryMapper.mapToCategoryDto(updatedCategory);
 
