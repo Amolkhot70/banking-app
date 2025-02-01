@@ -21,6 +21,7 @@ public class BankInterceptor implements HandlerInterceptor {
         LOGGER.info("Request URL: {}", request.getRequestURL());
         LOGGER.info("Request Method: {}", request.getMethod());
         return true;
+
     }
 
     @Override
