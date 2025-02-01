@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 )
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.ak.banking")
 public class BankingAppApplication {
 
 	public static void main(String[] args) {

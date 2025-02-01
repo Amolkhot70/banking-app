@@ -139,4 +139,10 @@ public class AccountController {
         return ResponseEntity.ok("Transfer successfully");
     }
 
+    // Demo Endpoint to Test the Interceptor
+    @GetMapping("/greetings")
+    public String getGreetings() {
+        return "Hello, Welcome to Banking App";
+    }
+
 }
